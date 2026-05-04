@@ -1,7 +1,37 @@
-http://localhost:3000/health
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+@url_api = http://{{host}}/api
+
+// Check healt web server
+GET http://{{host}}/health
 
 ###
-http://localhost:3000/api/users
+
+// Check routes not valids
+GET {{url_api}}/adawdusers
+
 
 ###
-http://localhost:3000/api/users/1
+// USERS
+// GET request all records from db
+GET {{url_api}}/users
+
+###
+
+// POST request store a record in DB
+POST {{url_api}}/register 
+Content-Type: {{contentType}}
+
+{
+  "name" : "john",
+  "username" : "johndoe",
+  "email" : "johns21@example.com",
+  "password" : "pwdjd123"
+}
+
+###
+// GET request a records from db with ID = 1
+GET {{url_api}}/users/1

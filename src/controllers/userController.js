@@ -1,3 +1,7 @@
+import bcrypt from 'bcrypt';
+import { getFullUrl } from '../lib/get-full-url.js';
+import { ApiError } from '../errors.js';
+
 export default class userController {
     constructor(userService) {
         this.userService = userService; // inyectado
@@ -21,14 +25,25 @@ export default class userController {
         try {
             const user = await this.userService.create(req.body);
             res.status(201).json(user);
-        } catch (err) { next(err); }
+        } catch (err) {
+            if (err instanceof ApiError) {
+                err.setLink(getFullUrl(req));
+            }
+            next(err);
+
+        }
     };
 
     register = async (req, res, next) => {
         try {
-
             const user = await this.userService.create(req.body);
             res.status(201).json(user);
-        } catch (err) { next(err); }
+        } catch (err) {
+            if (err instanceof ApiError) {
+                err.setLink(getFullUrl(req));
+            }
+
+            next(err);
+        }
     };
 }

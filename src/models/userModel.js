@@ -6,9 +6,6 @@ class UserModel {
         this.created_at = createdAt
     }
 
-    static validate({ name, email }) {
-        if (!name || !email) throw new Error('name y email son requeridos')
-    }
 }
 
 export default UserModel
