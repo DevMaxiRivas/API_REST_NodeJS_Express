@@ -1,0 +1,25 @@
+{
+  "name": "js-user-auth",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch ./src/index.js",
+    "test ": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "standart": "^6.1.0"
+  },
+  "eslintConfig": {
+    "extends": "standart"
+  }
+}
