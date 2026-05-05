@@ -32,6 +32,6 @@ export default class UserService {
             throw new ValidationError('Validation Error', 'This username has already been registered', 'body.username')
         }
 
-        return this.userRepository.create(data)
+        return await this.userRepository.create(data)
     }
 }

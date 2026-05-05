@@ -3,6 +3,7 @@ import { InternalError, ApiError } from './../errors.js'
 import { getFullUrl } from './../lib/get-full-url.js'
 
 const errorHandler = (err, req, res, next) => {
+    console.log('Prueba handler', err)
     if (err instanceof ApiError) {
         res.status(parseInt(err.status)).json(err.getJsonResponse())
         return

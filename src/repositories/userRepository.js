@@ -35,7 +35,7 @@ class UserRepository {
     }
 
     async create({ name, username, email, password }) {
-        const hashedPassword = await bcrypt.hashSync(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
         const { rows } = await this.pool.query(
             'INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *',
             [name, username, email, hashedPassword]

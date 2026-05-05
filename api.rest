@@ -3,10 +3,10 @@
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 
-@url_api = http://{{host}}/api
+@url_api = http://{{host}}/api/v1
 
 // Check healt web server
-GET http://{{host}}/health
+GET {{url_api}}/health
 
 ###
 
@@ -27,8 +27,8 @@ Content-Type: {{contentType}}
 
 {
   "name" : "john",
-  "username" : "johndoe",
-  "email" : "johns21@example.com",
+  "username" : "jo22hndoe",
+  "email" : "john2s21@example.com",
   "password" : "pwdjd123"
 }
 
