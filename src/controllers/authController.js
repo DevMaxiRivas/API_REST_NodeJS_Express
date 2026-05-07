@@ -1,4 +1,4 @@
-import { getFullUrl } from '../lib/get-full-url.js';
+import { getFullUrl } from '../lib/getFullUrl.js';
 import { ApiError } from '../errors.js';
 
 export default class authController {

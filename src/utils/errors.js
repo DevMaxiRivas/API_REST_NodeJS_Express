@@ -18,6 +18,7 @@ export class ApiError extends Error {
 
     getJsonResponse() {
         return {
+            'status': 'error',
             'errors': [
                 {
                     'status': `${this.status}`,
@@ -33,6 +34,12 @@ export class ApiError extends Error {
                 }
             ]
         }
+    }
+}
+
+export class BadRequestError extends ApiError {
+    constructor(message, detail, source, link = null) {
+        super(message, '400', 'BAD_REQUEST', 'Bad request', detail, source, link)
     }
 }
 

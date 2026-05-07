@@ -1,6 +1,10 @@
-import bcrypt from 'bcrypt';
-import { getFullUrl } from '../lib/get-full-url.js';
-import { ApiError } from '../errors.js';
+import { getFullUrl } from '../lib/getFullUrl.js';
+import { ApiError, BadRequestError, NotFoundError } from '../utils/errors.js';
+import { ApiResponse, CreatedResponse, SuccessResponse } from '../utils/apiResponse.js';
+import { response } from 'express';
+import { UserResponseDTO } from '../dtos/userResponseDTO.js';
+
+import userUpdateDTO from '../dtos/userUpdateDTO.js'
 
 export default class userController {
     constructor(userService) {
@@ -10,21 +14,37 @@ export default class userController {
     getAll = async (req, res, next) => {
         try {
             const users = await this.userService.getAll();
-            res.json(users);
-        } catch (err) { next(err); }
+            const response = new SuccessResponse(users.map(user => (new UserResponseDTO(user)).getJsonResponse()));
+            res.status(parseInt(response.statusCode)).json(response.getJsonResponse());
+
+        } catch (err) {
+            if (err instanceof ApiError) {
+                err.setLink(getFullUrl(req));
+            }
+
+            next(err);
+        }
     };
 
     getById = async (req, res, next) => {
         try {
             const user = await this.userService.getById(req.params.id);
-            res.json(user);
-        } catch (err) { next(err); }
+            const response = new SuccessResponse((new UserResponseDTO(user)).getJsonResponse());
+            res.status(parseInt(response.statusCode)).json(response.getJsonResponse());
+        } catch (err) {
+            if (err instanceof ApiError) {
+                err.setLink(getFullUrl(req));
+            }
+
+            next(err);
+        }
     };
 
     create = async (req, res, next) => {
         try {
             const user = await this.userService.create(req.body);
-            res.status(201).json(user);
+            const response = new CreatedResponse((new UserResponseDTO(user)).getJsonResponse());
+            res.status(parseInt(response.statusCode)).json(response.getJsonResponse());
         } catch (err) {
             if (err instanceof ApiError) {
                 err.setLink(getFullUrl(req));
@@ -34,16 +54,29 @@ export default class userController {
         }
     };
 
-    register = async (req, res, next) => {
+    update = async (req, res, next) => {
         try {
-            const user = await this.userService.create(req.body);
-            res.status(201).json(user);
+            if (!req.params.id) {
+                throw new NotFoundError('Not found User', 'id')
+            }
+
+            const dto = new userUpdateDTO(req.body)
+            const data = dto.getFilledFields()
+
+            if (Object.keys(data) === 0) {
+                throw new ValidationError('Validation Error', 'No fields to update', 'body')
+            }
+
+            const user = await this.userService.update(req.params.id, data)
+            const response = new SuccessResponse((new UserResponseDTO(user)).getJsonResponse());
+            res.status(parseInt(response.statusCode)).json(response.getJsonResponse());
         } catch (err) {
             if (err instanceof ApiError) {
                 err.setLink(getFullUrl(req));
             }
-
             next(err);
+
         }
     };
+
 }

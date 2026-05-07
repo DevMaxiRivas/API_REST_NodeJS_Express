@@ -30,7 +30,6 @@ class UserRepository {
         const { rows } = await this.pool.query(
             'SELECT id FROM users WHERE username = $1', [username]
         );
-        console.log(rows[0])
         return rows[0] ? true : false;
     }
 
@@ -41,6 +40,35 @@ class UserRepository {
             [name, username, email, hashedPassword]
         );
         return new UserModel(rows[0]);
+    }
+
+    async update(id, data) {
+        const cols = Object.keys(data);
+        const values = Object.values(data);
+        let userData = {}
+
+        if (cols.length > 1) {
+
+            let parametersQuery = [];
+            for (let i = 1; i <= cols.length; i++) {
+                parametersQuery.push("$" + i);
+            }
+
+            const { rows } = await this.pool.query(
+                `UPDATE users SET (${cols}) = (${parametersQuery.join(', ')}) WHERE id = $${cols.length + 1} RETURNING *`,
+                [...values, id]
+            );
+
+            userData = rows[0]
+        } else {
+            const { rows } = await this.pool.query(
+                `UPDATE users SET ${cols[0]} = $1 WHERE id = $2 RETURNING *`,
+                [values[0], id]
+            );
+            userData = rows[0]
+        }
+
+        return new UserModel(userData);
     }
 }
 

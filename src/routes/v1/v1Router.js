@@ -1,8 +1,8 @@
 // import { Router } from 'express'
 import createUserRoutes from './userRoutes.js'
 import { validationResult } from 'express-validator'
-import { getFullUrl } from '../../lib/get-full-url.js'
-import { ValidationError } from '../../errors.js'
+import { getFullUrl } from '../../lib/getFullUrl.js'
+import { ValidationError } from '../../utils/errors.js'
 import createUserRequest from '../../requests/user/createUserRequest.js'
 import userController from '../../container.js'
 import { Router } from 'express'
@@ -26,7 +26,7 @@ createV1Routes.post('/register', createUserRequest, (req, res, next) => {
     }
 
     try {
-        userController.register(req, res, next)
+        userController.create(req, res, next)
     } catch (err) {
         next(err)
     }
