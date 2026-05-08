@@ -50,8 +50,8 @@ export class NotFoundError extends ApiError {
 }
 
 export class UnauthorizedError extends ApiError {
-    constructor(message, source, link = null) {
-        super(message, '401', 'UNAUTHORIZED', 'Unauthorized', 'You are not authorized to access this resource', source, link
+    constructor(message, title = 'You are not authorized to access this resource', source, link = null) {
+        super(message, '401', 'UNAUTHORIZED', 'Unauthorized', title, source, link
         )
     }
 }
