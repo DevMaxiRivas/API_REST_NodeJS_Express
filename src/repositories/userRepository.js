@@ -19,6 +19,13 @@ class UserRepository {
         return rows[0] ? new UserModel(rows[0]) : null;
     }
 
+    async findByUsername(username) {
+        const { rows } = await this.pool.query(
+            'SELECT * FROM users WHERE username = $1', [username]
+        );
+        return rows[0] ? new UserModel(rows[0]) : null;
+    }
+
     async existsEmail(email) {
         const { rows } = await this.pool.query(
             'SELECT id FROM users WHERE email = $1', [email]
