@@ -40,9 +40,6 @@ export default class userController {
             const response = new CreatedResponse((new UserResponseDTO(user)).getJsonResponse());
             res.status(parseInt(response.statusCode)).json(response.getJsonResponse());
         } catch (err) {
-            if (err instanceof ApiError) {
-                err.setLink(getFullUrl(req));
-            }
             next(err);
 
         }
@@ -61,9 +58,6 @@ export default class userController {
             const response = new SuccessResponse((new UserResponseDTO(user)).getJsonResponse());
             res.status(parseInt(response.statusCode)).json(response.getJsonResponse());
         } catch (err) {
-            if (err instanceof ApiError) {
-                err.setLink(getFullUrl(req));
-            }
             next(err);
 
         }
