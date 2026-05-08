@@ -1,20 +1,28 @@
 import { getFullUrl } from '../lib/getFullUrl.js';
-import { ApiError } from '../errors.js';
+import { ApiError } from '../utils/errors.js';
 
 export default class authController {
     constructor(userService) {
         this.userService = userService;
     }
 
-    register = async (req, res, next) => {
+    login = async (req, res, next) => {
         try {
-            const user = await this.userService.create(req.body);
+            console.log(res.body)
+            const { username, password } = req.body
+            const user = await this.userService.login(username, password);
+            res.status(200).json(user);
+        } catch (err) {
+            next(err);
+        }
+    };
+
+
+    logout = async (req, res, next) => {
+        try {
+            const user = await this.userService.find(req.body);
             res.status(201).json(user);
         } catch (err) {
-            if (err instanceof ApiError) {
-                err.setLink(getFullUrl(req));
-            }
-
             next(err);
         }
     };

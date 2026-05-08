@@ -1,30 +1,31 @@
 // import { Router } from 'express'
 import createUserRoutes from './userRoutes.js'
-import { validationResult } from 'express-validator'
-import { getFullUrl } from '../../lib/getFullUrl.js'
-import { ValidationError } from '../../utils/errors.js'
 import createUserRequest from '../../requests/user/createUserRequest.js'
-import userController from '../../container.js'
+import { userController, authController } from '../../container.js'
 import { Router } from 'express'
+import { validateRequest } from '../../lib/validateRequest.js'
+import loginRequest from '../../requests/auth/loginRequest.js'
+import { BadRequestError } from '../../utils/errors.js'
 
 const createV1Routes = Router()
 
 createV1Routes.use('/users', createUserRoutes(userController))
 
-// app.post('/login', (req, res) => { })
-createV1Routes.post('/register', createUserRequest, (req, res, next) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        const validationError = errors.array()[0]
-
-        throw new ValidationError(
-            'Validation error: ' + validationError.msg,
-            validationError.msg,
-            validationError.location,
-            getFullUrl(req)
-        )
+createV1Routes.post('/login', loginRequest, (req, res, next) => {
+    if (req.body === undefined) {
+        throw new BadRequestError('Bad request', 'No fields in the request', 'body')
     }
 
+    validateRequest(req)
+    try {
+        authController.login(req, res, next)
+    } catch (err) {
+        next(err)
+    }
+})
+
+createV1Routes.post('/register', createUserRequest, (req, res, next) => {
+    validateRequest(req)
     try {
         userController.create(req, res, next)
     } catch (err) {
