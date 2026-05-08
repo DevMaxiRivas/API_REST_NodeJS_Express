@@ -4,6 +4,7 @@ import { getFullUrl } from '../lib/getFullUrl.js'
 
 const errorHandler = (err, req, res, next) => {
     if (err instanceof ApiError) {
+        err.setLink(getFullUrl(req))
         res.status(parseInt(err.status)).json(err.getJsonResponse())
         return
     }
