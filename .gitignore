@@ -1,2 +1,7 @@
 node_modules/
+.env.*
 .env
+*.yml
+Dockerfile
+ComposeREADME.md
+nginx.conf

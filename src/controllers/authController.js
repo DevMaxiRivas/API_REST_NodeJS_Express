@@ -8,7 +8,6 @@ export default class authController {
 
     login = async (req, res, next) => {
         try {
-            console.log(res.body)
             const { username, password } = req.body
             const user = await this.userService.login(username, password);
             res.status(200).json(user);

@@ -7,6 +7,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
     "dev": "node --watch ./src/index.js",
     "test ": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,12 +17,18 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
+    "jsonwebtoken": "^9.0.3",
     "pg": "^8.20.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "standart": "^6.1.0"
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.5",
+    "babel-jest": "^30.4.1",
+    "jest": "^30.4.1",
+    "standart": "^6.1.0",
+    "supertest": "^7.2.2"
   },
   "eslintConfig": {
     "extends": "standart"

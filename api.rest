@@ -26,24 +26,32 @@ POST {{url_api}}/register
 Content-Type: {{contentType}}
 
 {
-  "name" : "john",
-  "username" : "wada323",
-  "email" : "awda2d@example.com",
-  "password" : "pwdjd123"
+  "name" : "QA Name",
+  "username" : "1QAUsername",
+  "email" : "q1a@example.com",
+  "password" : "pwd12345"
+}
+
+###
+POST {{url_api}}/register 
+Content-Type: {{contentType}}
+
+{
+  "name" : "UserCreate",
+  "username" : "uswerdcreate"
 }
 
 ###
 // GET request a records from db with ID = 1
-GET {{url_api}}/users/1
+GET {{url_api}}/users/4
 
 ###
 // PATCH request update a records from db with ID = 1
 PATCH  {{url_api}}/users/1
-
 Content-Type: {{contentType}}
+
 {
-  "name" : "test",
-  "username" : "test123"
+  "pato":"123"
 }
 
 ###
@@ -51,5 +59,17 @@ PATCH http://localhost:3000/api/v1/users/4 HTTP/1.1
 Content-Type: {{contentType}}
 
 {
-  "name" : "Prueba2",
+  "email" : "test@example.com"
 }
+
+###
+
+POST  http://localhost:3000/api/v1/login HTTP/1.1
+
+Content-Type: {{contentType}}
+{
+  "username" : "user123",
+  "password" : "test@example.com"
+}
+
+###
