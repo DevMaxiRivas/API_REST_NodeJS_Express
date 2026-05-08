@@ -1,4 +1,8 @@
 import { Router } from 'express'
+import updateUserRequest from '../../requests/user/updateUserRequest.js'
+import { BadRequestError } from '../../utils/errors.js'
+import { validateRequest } from '../../lib/validateRequest.js'
+import { validateParams } from '../../lib/validateParams.js'
 
 const createUserRoutes = (userController) => {
     const router = Router()
@@ -37,7 +41,14 @@ const createUserRoutes = (userController) => {
      *               items:
      *                 $ref: '#/components/schemas/User'
      */
-    router.get('/:id', userController.getById)
+    router.get('/:id', (req, res, next) => {
+        try {
+            validateParams(req.params.id, 'user_id', 'integer')
+            userController.getById(req, res, next)
+        } catch (err) {
+            next(err)
+        }
+    })
 
     /**
      * @swagger
@@ -59,9 +70,18 @@ const createUserRoutes = (userController) => {
      *             schema:
      *               $ref: '#/components/schemas/User'
      */
-    router.post('/', userController.create)
+    router.patch('/:id', updateUserRequest, (req, res, next) => {
+        if (req.body === undefined) {
+            throw new BadRequestError('Bad request', 'No fields to update', 'body')
+        }
 
-    router.patch('/:id', userController.update)
+        validateRequest(req)
+        try {
+            userController.update(req, res, next)
+        } catch (err) {
+            next(err)
+        }
+    })
 
     return router
 }
