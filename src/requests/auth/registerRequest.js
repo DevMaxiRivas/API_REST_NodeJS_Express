@@ -1,6 +1,9 @@
-import { body } from 'express-validator'
+import { body, header } from 'express-validator'
+import { validateNotEmptyBody } from '../../lib/validateNotEmptyBody'
 
 const registerRequest = [
+    header('authorization').not().exists().withMessage('Authorization header should not exist'),
+    body().custom((value, { req }) => { return validateNotEmptyBody(req) }),
     body('name').isString().withMessage('name is required and must be a string'),
     body('email').isEmail().withMessage('email is required and most be a email'),
     body('password').isString().withMessage('password is required and must be a string'),
