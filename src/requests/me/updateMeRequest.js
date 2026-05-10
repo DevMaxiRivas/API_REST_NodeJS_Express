@@ -1,11 +1,11 @@
 import { body, header } from 'express-validator'
-import { validateNotEmptyBody } from '../../lib/validateNotEmptyBody'
-import { validateJWTToken } from '../../lib/validateJWTToken'
-import { SECRET_JWT_ACCESS_KEY } from '../../config'
+import { validateNotEmptyBody } from '../../lib/validateNotEmptyBody.js'
+import { validateJWTToken } from '../../lib/validateJWTToken.js'
+import { SECRET_JWT_KEY } from './../../config.js'
 
 const updateMeRequest = [
     header('authorization').exists().withMessage('Authorization header is required'),
-    header('authorization').custom((value) => { return validateJWTToken(value.split(' ')[1], SECRET_JWT_ACCESS_KEY, 'headers') }),
+    header('authorization').custom((value) => { return validateJWTToken(value.split(' ')[1], SECRET_JWT_KEY, 'headers') }),
     body().custom((value, { req }) => { return validateNotEmptyBody(req) }),
     body('name').optional().isString().withMessage('Name must be a string'),
     body('username').optional().isString().withMessage('Username must be a string'),
