@@ -27,8 +27,8 @@ export default class AuthService {
             throw createApiError(401, 'Unauthorized Error', { title: 'Authentication failed. Wrong password.', source: 'body.password' })
         }
 
-        const refreshToken = generateToken(user, 'refresh', '7d')
-        const accessToken = generateToken(user, 'access', '1h')
+        const refreshToken = generateToken(user, 'refresh')
+        const accessToken = generateToken(user, 'access')
 
         const refreshTokenHash = await bcrypt.hash(refreshToken, ENCRYPT_SALT)
         const tokenHashList = addTokenToList(user.tokens, refreshTokenHash)
@@ -70,8 +70,8 @@ export default class AuthService {
 
         const user = await this.userRepository.create(data)
 
-        const refreshToken = generateToken(user, 'refresh', '7d')
-        const accessToken = generateToken(user, 'access', '1h')
+        const refreshToken = generateToken(user, 'refresh')
+        const accessToken = generateToken(user, 'access')
 
         const refreshTokenHash = await bcrypt.hash(refreshToken, ENCRYPT_SALT)
         const tokenHashList = addTokenToList([], refreshTokenHash)
@@ -97,7 +97,7 @@ export default class AuthService {
                 throw createApiError(403, 'Forbidden Error', { detail: 'Invalid refresh token', source: 'cookie' })
             }
 
-            const accessToken = generateToken(user, 'access', '1h')
+            const accessToken = generateToken(user, 'access')
             return { accessToken }
 
         } catch (err) {

@@ -15,3 +15,5 @@ export const ENCRYPT_SALT = parseInt(process.env.ENCRYPT_SALT) || 10
 
 export const NODE_ENV = process.env.NODE_ENV
 
+export const JWT_ACCESS_EXPIRES_IN = process.env.JWT_ACCESS_EXPIRES_IN || '15m'
+export const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || '7d'
