@@ -1,5 +1,5 @@
 import { body, header } from 'express-validator'
-import { validateNotEmptyBody } from '../../lib/validateNotEmptyBody'
+import { validateNotEmptyBody } from '../../lib/validateNotEmptyBody.js'
 
 const loginRequest = [
     header('authorization').not().exists().withMessage('Authorization header should not exist'),

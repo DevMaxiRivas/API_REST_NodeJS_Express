@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { createApiError } from '../utils/errors'
+import { createApiError } from '../utils/errors.js'
 
 /**
  * Validates a JWT token by checking its existence and signature.

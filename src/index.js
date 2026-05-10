@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1', createV1Routes)
 // Ruta para Swagger UI
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 // app.use('/v1', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 app.use((req, res) => {

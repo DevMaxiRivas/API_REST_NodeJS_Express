@@ -1,5 +1,5 @@
 import { body, param } from 'express-validator'
-import { validateNotEmptyBody } from '../../lib/validateNotEmptyBody'
+import { validateNotEmptyBody } from '../../lib/validateNotEmptyBody.js'
 
 const createUserRequest = [
     param('id').isInt().withMessage('userId must be an integer'),
