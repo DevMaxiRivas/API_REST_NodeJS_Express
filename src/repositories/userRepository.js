@@ -40,11 +40,11 @@ class UserRepository {
         return rows[0] ? true : false;
     }
 
-    async create({ name, username, email, password }) {
+    async create({ name, username, email, password, tokens = null }) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const { rows } = await this.pool.query(
-            'INSERT INTO users (name, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *',
-            [name, username, email, hashedPassword]
+            'INSERT INTO users (name, username, email, password, tokens) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [name, username, email, hashedPassword, tokens]
         );
         return new UserModel(rows[0]);
     }
