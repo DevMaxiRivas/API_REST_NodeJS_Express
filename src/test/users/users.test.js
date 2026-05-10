@@ -4,7 +4,7 @@ import pool from '../../config/database';
 
 const urlBase = '/api/v1'
 
-describe(`GET ${urlBase}/users`, () => {
+describe(`GET /api/v1/users`, () => {
     it('Must return a list of users', async () => {
         const response = await request(app)
             .get(`${urlBase}/users`)
@@ -30,7 +30,7 @@ describe(`GET ${urlBase}/users`, () => {
     });
 });
 
-// describe(`POST ${urlBase}/users`, () => {
+// describe(`POST /api/v1/users`, () => {
 //     it('Must create a new user and return it', async () => {
 //         const uniqueID = Date.now().toString();
 //         const newUser = {
@@ -49,7 +49,7 @@ describe(`GET ${urlBase}/users`, () => {
 //         expect(Array.isArray(response.body.data)).toBe(true);
 //     });
 
-//     it('debe devolver 400 si falta el nombre', async () => {
+//     it('Must return 400', async () => {
 //         const response = await request(app)
 //             .post(`${urlBase}/users`)
 //             .send({})
