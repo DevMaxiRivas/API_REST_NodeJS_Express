@@ -10,6 +10,7 @@ export class ApiResponse {
     getJsonResponse() {
         return {
             data: this.data,
+            statusCode: this.statusCode,
             success: this.success
         }
     }

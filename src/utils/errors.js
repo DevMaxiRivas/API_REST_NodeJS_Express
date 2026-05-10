@@ -3,7 +3,7 @@ export class ApiError extends Error {
         super(message)
 
         this.status = status
-        this.statusCode = statusCode
+        this.statusCode = parseInt(statusCode)
         this.title = title
         this.detail = detail
         this.source = source
