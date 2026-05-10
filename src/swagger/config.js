@@ -2,8 +2,10 @@ import dotenv from 'dotenv'
 import swaggerJsdoc from 'swagger-jsdoc'
 import userSchemas from './definitions.js'
 
+import { SERVER_URL } from '../config.js'
+
 dotenv.config()
-const serverURL = process.env.SERVER_URL
+const serverURL = SERVER_URL
 const options = {
     definition: {
         openapi: '3.0.0',
