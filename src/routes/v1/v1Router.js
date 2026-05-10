@@ -3,24 +3,17 @@ import createUserRoutes from './userRoutes.js'
 import { userController, authController } from '../../container.js'
 import { Router } from 'express'
 import { validateRequest } from '../../lib/validateRequest.js'
-import { UnauthorizedError } from '../../utils/errors.js'
-import updateUserRequest from '../../requests/user/updateUserRequest.js'
-import { validateBody } from '../../lib/validateBody.js'
 import createAuthRoutes from './authRoutes.js'
+import updateMeRequest from '../../requests/me/updateMeRequest.js'
 
 const createV1Routes = Router()
 
 createV1Routes.use('/users', createUserRoutes(userController))
 createV1Routes.use('/auth', createAuthRoutes(authController))
 
-createV1Routes.patch('/me', updateUserRequest, (req, res, next) => {
-    if (!req.session.user) {
-        throw new UnauthorizedError('Unauthorized Error', 'No token in the request', 'header')
-    }
-
-    validateBody(req)
-    validateRequest(req)
+createV1Routes.patch('/me', updateMeRequest, (req, res, next) => {
     try {
+        validateRequest(req)
         userController.updateAuthUser(req, res, next)
     } catch (err) {
         next(err)
