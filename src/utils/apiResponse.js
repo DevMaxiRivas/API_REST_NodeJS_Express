@@ -1,6 +1,8 @@
+import { InternalError } from './errors.js'
+
 export class ApiResponse {
     constructor(statusCode, data) {
-        this.statusCode = statusCode
+        this.statusCode = parseInt(statusCode)
         this.data = data
         this.success = statusCode < 400
     }
@@ -26,7 +28,17 @@ export class CreatedResponse extends ApiResponse {
 }
 
 export class NoContentResponse extends ApiResponse {
-    constructor(data) {
+    constructor() {
         super(204, [])
+    }
+}
+
+export function createApiResponse(statusCode, data = null) {
+    switch (statusCode) {
+        case 200: return new SuccessResponse(data)
+        case 201: return new CreatedResponse(data)
+        case 204: return new NoContentResponse()
+        default:
+            throw new InternalError('CreateApiResponse: Status code not found', 'internal error')
     }
 }
