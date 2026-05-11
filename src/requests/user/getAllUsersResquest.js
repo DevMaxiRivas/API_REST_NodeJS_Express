@@ -1,6 +1,6 @@
 import { header } from 'express-validator'
 import { SECRET_JWT_KEY } from '../../config.js'
-import { validateJWTToken } from '../../lib/validateJWTToken'
+import { validateJWTToken } from '../../lib/validateJWTToken.js'
 
 const getAllUserRequest = [
     header('authorization').exists().withMessage('Authorization header is required'),
