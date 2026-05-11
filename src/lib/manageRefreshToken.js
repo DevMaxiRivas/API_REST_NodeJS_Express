@@ -1,3 +1,5 @@
+import bcrypt from 'bcrypt'
+
 /**
  * Adds a token to a list of tokens.
  *
@@ -52,10 +54,51 @@ export function addTokenToList(tokens, token) {
  * const result = removeTokenFromList(null, 'anything');
  * console.log(result); // []
  */
-export function removeTokenFromList(tokens, token) {
+export async function removeTokenFromList(tokens, token) {
     if (!tokens) {
         return []
     }
 
-    return tokens.filter(t => t !== token)
+    let i = 0
+    for (i = 0; i < tokens.length; i++) {
+        const isEqual = await bcrypt.compare(token, tokens[i])
+        if (isEqual) {
+            break
+        }
+    }
+
+    return tokens.filter((_, index) => index !== i)
+}
+
+
+/**
+ * Checks if a given token exists in a list of hashed tokens using bcrypt comparison.
+ *
+ * This function iterates over an array of hashed tokens (presumably stored in a database
+ * or in-memory list) and compares each one asynchronously with the provided plain-text token.
+ * It returns `true` as soon as a match is found. If none match, it returns `false`.
+ *
+ * @param {Array<string>} tokens - An array of hashed tokens (e.g., refresh tokens stored as bcrypt hashes).
+ * @param {string} token - The plain-text token to compare against the hashed list.
+ * @returns {Promise<boolean>} A promise that resolves to `true` if the token matches any hashed token,
+ *                             otherwise `false`.
+ *
+ * @example
+ * // Assuming we have stored refresh tokens as bcrypt hashes
+ * const hashedTokens = ['$2b$10$...', '$2b$10$...'];
+ * const plainToken = req.cookies.refresh_token;
+ *
+ * const exists = await tokenExistsInList(hashedTokens, plainToken);
+ * if (exists) {
+ *   // Token is valid and known
+ * }
+ */
+export async function tokenExistsInList(tokens, token) {
+    for (const element of tokens) {
+        const isValid = await bcrypt.compare(token, element)
+        if (isValid) {
+            return true
+        }
+    }
+    return false
 }
