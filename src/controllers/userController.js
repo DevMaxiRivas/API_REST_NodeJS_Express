@@ -61,6 +61,18 @@ export default class userController {
         }
     }
 
+    delete = async (req, res, next) => {
+        try {
+            const user = await this.userService.delete(req.params.id)
+            const response = createApiResponse(200, (new UserResponseDTO(user)).getJsonResponse())
+            res.status(response.statusCode).json(response.getJsonResponse())
+        } catch (err) {
+            next(err)
+
+        }
+    }
+
+
     updateAuthUser = async (req, res, next) => {
         try {
             const { id, username } = req.session.user

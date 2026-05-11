@@ -2,13 +2,15 @@ import { Router } from 'express'
 import { validateRequest } from '../../lib/validateRequest.js'
 import updateUserRequest from '../../requests/user/updateUserRequest.js'
 import getUserRequest from '../../requests/user/getUserRequest.js'
+import getAllUserRequest from '../../requests/user/getAllUsersResquest.js'
+import deleteUserRequest from '../../requests/user/deleteUserRequest.js'
 
 const createUserRoutes = (userController) => {
     const router = Router()
 
     /**
      * @swagger
-     * /api/v1/users:
+     * /users:
      *   get:
      *     summary: Get all users
      *     tags: [Users]
@@ -53,11 +55,18 @@ const createUserRoutes = (userController) => {
      *                   links:
      *                     about: "http://localhost:3000/api/v1/users"
      */
-    router.get('/', userController.getAll)
+    router.get('/', getAllUserRequest, (req, res, next) => {
+        try {
+            validateRequest(req)
+            userController.getAll(req, res, next)
+        } catch (err) {
+            next(err)
+        }
+    })
 
     /**
      * @swagger
-     * /api/v1/users/{id}:
+     * /users/{id}:
      *   get:
      *     summary: Get user by ID
      *     tags: [Users]
@@ -183,7 +192,7 @@ const createUserRoutes = (userController) => {
 
     /**
      * @swagger
-     * /api/v1/users/{id}:
+     * /users/{id}:
      *   patch:
      *     summary: Update user data (partial)
      *     tags: [Users]
@@ -353,6 +362,142 @@ const createUserRoutes = (userController) => {
         try {
             validateRequest(req)
             userController.update(req, res, next)
+        } catch (err) {
+            next(err)
+        }
+    })
+
+    /**
+     * @swagger
+     * /users/{id}:
+     *   delete:
+     *     summary: Delete a user
+     *     tags: [Users]
+     *     description: |
+     *       Permanently deletes a user from the system by their ID.
+     *       
+     *       **Validations performed by `deleteUserRequest` middleware:**
+     *       - Validates that the URL parameter `id` is a valid integer.
+     *       - Verifies that a valid JWT token is sent in the `Authorization` header (Bearer token).
+     *       - If the ID is not an integer or the token is missing/invalid, a 422 error is returned.
+     *       - (Additional business logic, e.g., preventing self‑deletion, may also apply.)
+     *     
+     *     security:
+     *       - bearerAuth: []
+     *     
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: integer
+     *         description: Numeric ID of the user to delete.
+     *         example: 123
+     *     
+     *     responses:
+     *       200:
+     *         description: User deleted successfully – returns the deleted user data.
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               required:
+     *                 - success
+     *                 - statusCode
+     *                 - data
+     *               properties:
+     *                 success:
+     *                   type: boolean
+     *                   example: true
+     *                 statusCode:
+     *                   type: integer
+     *                   example: 200
+     *                 data:
+     *                   type: object
+     *                   properties:
+     *                     id:
+     *                       type: integer
+     *                       example: 123
+     *                     name:
+     *                       type: string
+     *                       example: "Test Name"
+     *                     username:
+     *                       type: string
+     *                       example: "testuser"
+     *                     email:
+     *                       type: string
+     *                       example: "t*******r@example.com"
+     *                       description: Masked email for privacy.
+     *             example:
+     *               success: true
+     *               statusCode: 200
+     *               data:
+     *                 id: 123
+     *                 name: "Test Name"
+     *                 username: "testuser"
+     *                 email: "t*******r@example.com"
+     *       422:
+     *         description: Unprocessable entity – validation error (invalid ID or missing/invalid token).
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: "#/components/schemas/ErrorResponse"
+     *             examples:
+     *               missingAuth:
+     *                 summary: Missing Authorization header
+     *                 value:
+     *                   status: "error"
+     *                   errors:
+     *                     - status: "VALIDATION_ERROR"
+     *                       code: 422
+     *                       title: "Invalid request"
+     *                       detail: "Authorization is required"
+     *                       source:
+     *                         pointer: "headers.authorization"
+     *                       links:
+     *                         about: "http://localhost:3000/api/v1/users/123"
+     *               invalidId:
+     *                 summary: ID is not an integer
+     *                 value:
+     *                   status: "error"
+     *                   errors:
+     *                     - status: "VALIDATION_ERROR"
+     *                       code: 422
+     *                       title: "Invalid request"
+     *                       detail: "User ID must be an integer"
+     *                       source:
+     *                         pointer: "path.id"
+     *               userNotFound:
+     *                 summary: User does not exist (if validated)
+     *                 value:
+     *                   status: "error"
+     *                   errors:
+     *                     - status: "VALIDATION_ERROR"
+     *                       code: 422
+     *                       title: "Invalid request"
+     *                       detail: "User not found"
+     *                       source:
+     *                         pointer: "path.id"
+     *       401:
+     *         description: Unauthorized – token expired or invalid signature.
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: "#/components/schemas/ErrorResponse"
+     *             example:
+     *               status: "error"
+     *               errors:
+     *                 - status: "UNAUTHORIZED"
+     *                   code: 401
+     *                   title: "Unauthorized"
+     *                   detail: "Invalid token"
+     *                   source:
+     *                     pointer: "headers.authorization"
+     */
+    router.delete('/:id', deleteUserRequest, (req, res, next) => {
+        try {
+            validateRequest(req)
+            userController.delete(req, res, next)
         } catch (err) {
             next(err)
         }

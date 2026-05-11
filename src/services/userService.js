@@ -59,4 +59,14 @@ export default class UserService {
 
         return await this.userRepository.update(id, data)
     }
+
+    async delete(id) {
+
+        const user = await this.userRepository.findById(id)
+        if (!user) {
+            throw new NotFoundError('Not found User', 'id')
+        }
+
+        return await this.userRepository.delete(id)
+    }
 }

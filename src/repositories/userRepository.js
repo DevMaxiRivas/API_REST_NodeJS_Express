@@ -8,7 +8,7 @@ class UserRepository {
     }
 
     async findAll() {
-        const { rows } = await this.pool.query('SELECT * FROM users ORDER BY id');
+        const { rows } = await this.pool.query('SELECT * FROM users ORDER BY id LIMIT 10');
         return rows.map(row => new UserModel(row));
     }
 
@@ -76,6 +76,14 @@ class UserRepository {
         }
 
         return new UserModel(userData);
+    }
+
+    async delete(id) {
+        const { rows } = await this.pool.query(
+            'DELETE FROM users WHERE id = ($1) RETURNING *',
+            [id]
+        );
+        return new UserModel(rows[0]);
     }
 }
 
