@@ -57,8 +57,8 @@ export class UnauthorizedError extends ApiError {
 }
 
 export class ForbiddenError extends ApiError {
-    constructor(message, source, link = null) {
-        super(message, 403, 'FORBIDDEN', 'Forbidden', 'You do not have permission to access this resource', source, link
+    constructor(message, detail, source, link = null) {
+        super(message, 403, 'FORBIDDEN', 'Forbidden', detail, source, link
         )
     }
 }
@@ -97,7 +97,7 @@ export function createApiError(code, message, opts = {}) {
     const errorMap = {
         '400': { Class: BadRequestError, defaultDetail: 'Invalid request data', defaultTitle: 'Bad request' },
         '401': { Class: UnauthorizedError, defaultTitle: 'You are not authorized to access this resource' },
-        '403': { Class: ForbiddenError },
+        '403': { Class: ForbiddenError, defaultDetail: 'You do not have permission to access this resource' },
         '404': { Class: NotFoundError },
         '408': { Class: TimeoutError },
         '422': { Class: ValidationError, defaultDetail: 'Request validation failed' },
@@ -120,7 +120,7 @@ export function createApiError(code, message, opts = {}) {
         case NotFoundError:
             return new NotFoundError(message, source)
         case ForbiddenError:
-            return new ForbiddenError(message, source)
+            return new ForbiddenError(message, detail || defaultDetail, source)
         case TimeoutError:
             return new TimeoutError(message, source)
         case InternalError:
