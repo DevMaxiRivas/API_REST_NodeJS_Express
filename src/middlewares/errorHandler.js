@@ -15,6 +15,12 @@ const errorHandler = (err, req, res, next) => {
         return
     }
 
+    if (err.name === 'TokenExpiredError') {
+        const error = new UnauthorizedError('JsonWebTokenError: Token expired', 'Token is expired', 'header', getFullUrl(req))
+        res.status(error.statusCode).json(error.getJsonResponse())
+        return
+    }
+
     if (err.name === 'SyntaxError' && err.type === 'entity.parse.failed') {
         const error = new BadRequestError(err.message, 'The request body could not be parsed', 'body', getFullUrl(req))
         res.status(error.statusCode).json(error.getJsonResponse())
