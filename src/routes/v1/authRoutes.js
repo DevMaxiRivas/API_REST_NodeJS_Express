@@ -10,7 +10,7 @@ const createAuthRoutes = (authController) => {
 
     /**
      * @swagger
-     * /api/v1/auth/login:
+     * /auth/login:
      *   post:
      *     summary: Login
      *     tags: [Auth]
@@ -36,7 +36,7 @@ const createAuthRoutes = (authController) => {
      *             properties:
      *               username:
      *                 type: string
-     *                 example: "testuser@example.com"
+     *                 example: "testusername"
      *                 description: User's email or username
      *               password:
      *                 type: string
@@ -44,7 +44,7 @@ const createAuthRoutes = (authController) => {
      *                 example: "pwd12345678"
      *                 description: User's password
      *           example:
-     *             username: "testuser@example.com"
+     *             username: "testusername"
      *             password: "pwd12345678"
      *
      *     responses:
@@ -118,6 +118,7 @@ const createAuthRoutes = (authController) => {
      */
     router.post('/login', loginRequest, (req, res, next) => {
         try {
+            console.log(req.cookies)
             validateRequest(req)
             authController.handleLogin(req, res, next)
         } catch (err) {
@@ -127,7 +128,7 @@ const createAuthRoutes = (authController) => {
 
     /**
      * @swagger
-     * /api/v1/auth/logout:
+     * /auth/logout:
      *   post:
      *     summary: User logout
      *     tags: [Auth]
@@ -148,7 +149,7 @@ const createAuthRoutes = (authController) => {
      *         required: true
      *         schema:
      *           type: string
-     *         description: JWT refresh token (HttpOnly, Secure cookie) sent by the server on login/register.
+     *         description: JWT refresh token (HttpOnly, Secure cookie) sent by the server on login/register (It is automatically loaded by the browser; fill in the field with any string).
      *     
      *     responses:
      *       204:
@@ -188,7 +189,7 @@ const createAuthRoutes = (authController) => {
 
     /**
      * @swagger
-     * /api/v1/auth/register:
+     * /auth/register:
      *   post:
      *     summary: Register a new user
      *     tags: [Auth]
@@ -235,9 +236,9 @@ const createAuthRoutes = (authController) => {
      *                 description: Password (minimum 8 characters, etc.)
      *           example:
      *             name: "Test User"
-     *             username: "testuser"
+     *             username: "testusername"
      *             email: "testuser@example.com"
-     *             password: "pwd12345"
+     *             password: "pwd12345678"
      *     
      *     responses:
      *       201:
@@ -319,8 +320,8 @@ const createAuthRoutes = (authController) => {
 
     /**
      * @swagger
-     * /api/v1/auth/refresh:
-     *   get:
+     * /auth/refresh:
+     *   post:
      *     summary: Refresh access token
      *     tags: [Auth]
      *     description: |
@@ -340,7 +341,7 @@ const createAuthRoutes = (authController) => {
      *         required: true
      *         schema:
      *           type: string
-     *         description: JWT refresh token (HttpOnly, Secure cookie) obtained from login or register.
+     *         description: JWT refresh token (HttpOnly, Secure cookie) obtained from login or register (It is automatically loaded by the browser; fill in the field with any string).
      *     
      *     responses:
      *       200:
@@ -390,10 +391,10 @@ const createAuthRoutes = (authController) => {
      *                   links:
      *                     about: "http://localhost:3000/api/v1/auth/refresh"
      */
-    router.get('/refresh', refreshRequest, (req, res, next) => {
+    router.post('/refresh', refreshRequest, (req, res, next) => {
         try {
             validateRequest(req)
-            authController.handleRefreshToken(req, res, next)
+            authController.handleRefresh(req, res, next)
         } catch (err) {
             next(err)
         }

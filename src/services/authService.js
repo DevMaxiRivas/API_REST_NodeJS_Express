@@ -1,10 +1,10 @@
-import { createApiError, NotFoundError, UnauthorizedError, ValidationError } from '../utils/errors.js'
+import { ApiError, createApiError, NotFoundError, UnauthorizedError, ValidationError } from '../utils/errors.js'
 import UserModel from '../models/userModel.js'
 import userUpdateDTO from '../dtos/userUpdateDTO.js'
 
 import bcrypt from 'bcrypt'
 import { generateToken } from '../lib/generateToken.js'
-import { addTokenToList, removeTokenFromList } from '../lib/manageRefreshToken.js'
+import { addTokenToList, removeTokenFromList, tokenExistsInList } from '../lib/manageRefreshToken.js'
 import { ENCRYPT_SALT, SECRET_JWT_REFRESH_KEY } from '../config.js'
 import { arrayToString } from '../lib/databaseMapping.js'
 
@@ -39,21 +39,15 @@ export default class AuthService {
     }
 
     async logout(refreshToken) {
-        try {
-            const { id } = jwt.verify(refreshToken, SECRET_JWT_REFRESH_KEY)
-            const user = await this.userRepository.findById(id)
+        const { id } = jwt.verify(refreshToken, SECRET_JWT_REFRESH_KEY)
+        const user = await this.userRepository.findById(id)
 
-            if (!user) {
-                throw createApiError(403, 'Forbidden Error', { detail: 'Invalid refresh token', source: 'cookie' })
-            }
-
-            const refreshTokenHash = await bcrypt.hash(refreshToken, ENCRYPT_SALT)
-            const tokenHashList = removeTokenFromList(user.tokens, refreshTokenHash)
-
-            await this.userRepository.update(user.id, { tokens: arrayToString(tokenHashList) })
-        } catch (err) {
-            throw createApiError(401, 'Unauthorized Error', { title: 'Authentication failed. Invalid token.', source: 'cookie' })
+        if (!user) {
+            throw createApiError(403, 'Forbidden Error', { detail: 'Invalid refresh token', source: 'cookie' })
         }
+
+        const tokenHashList = await removeTokenFromList(user.tokens, refreshToken)
+        await this.userRepository.update(user.id, { tokens: arrayToString(tokenHashList) })
     }
 
     async register(data) {
@@ -82,26 +76,18 @@ export default class AuthService {
     }
 
     async refresh(refreshToken) {
-        try {
-            const { id } = jwt.verify(refreshToken, SECRET_JWT_REFRESH_KEY)
-            const user = await this.userRepository.findById(id)
-
-            if (!user) {
-                throw createApiError(403, 'Forbidden Error', { detail: 'Invalid refresh token', source: 'cookie' })
-            }
-
-            const currentTokenHashList = user.tokens
-            refreshTokenHash = await bcrypt.hash(refreshToken, ENCRYPT_SALT)
-
-            if (!currentTokenHashList.includes(refreshTokenHash)) {
-                throw createApiError(403, 'Forbidden Error', { detail: 'Invalid refresh token', source: 'cookie' })
-            }
-
-            const accessToken = generateToken(user, 'access')
-            return { accessToken }
-
-        } catch (err) {
+        const { id } = jwt.verify(refreshToken, SECRET_JWT_REFRESH_KEY)
+        const user = await this.userRepository.findById(id)
+        if (user === null) {
             throw createApiError(403, 'Forbidden Error', { detail: 'Invalid refresh token', source: 'cookie' })
         }
+
+        const isValid = await tokenExistsInList(user.tokens, refreshToken)
+        if (!isValid) {
+            throw createApiError(403, 'Forbidden Error', { detail: 'Invalid refresh token', source: 'cookie' })
+        }
+
+        const accessToken = generateToken(user, 'access')
+        return { accessToken }
     }
 }

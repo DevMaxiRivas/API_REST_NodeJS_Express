@@ -2,7 +2,9 @@ node_modules/
 .env.*
 .env
 *.yml
+*.yaml
 Dockerfile
 ComposeREADME.md
 nginx.conf
 nginx/
+nodejs/
