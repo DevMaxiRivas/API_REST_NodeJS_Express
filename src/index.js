@@ -36,10 +36,13 @@ app.use((req, res, next) => {
     }
 })
 
-app.use('/api/v1', createV1Routes)
+app.get('/', (req, res) => {
+    res.redirect(301, '/api-docs')
+})
+
 // Ruta para Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-// app.use('/v1', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use('/api/v1', createV1Routes)
 
 app.use((req, res) => {
     throw createApiError(404, 'The resource you requested could not be found', { source: 'path' })
