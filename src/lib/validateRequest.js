@@ -1,5 +1,5 @@
 import { validationResult } from 'express-validator'
-import { createApiError, ValidationError } from '../utils/errors.js'
+import { ValidationError } from '../utils/errors.js'
 
 /**
  * Validates the request using `express-validator` validation results.
@@ -46,17 +46,13 @@ import { createApiError, ValidationError } from '../utils/errors.js'
  * }
  */
 export function validateRequest(req) {
-    try {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            const validationError = errors.array()[0]
-            throw new ValidationError(
-                'Validation error: ' + validationError.msg,
-                validationError.msg,
-                validationError.location
-            )
-        }
-    } catch (err) {
-        throw createApiError(500, 'Validate Request Error: Internal Server Error', { source: 'request' })
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        const validationError = errors.array()[0]
+        throw new ValidationError(
+            'Validation error: ' + validationError.msg,
+            validationError.msg,
+            validationError.location
+        )
     }
 }
